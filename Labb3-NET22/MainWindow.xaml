@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Labb3_NET22"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Quiz Game" Height="400" Width="800" Background="Beige">
     <Grid>
-
+        <StackPanel x:Name="MainMenuPanel"   VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="Welcome to Quiz Game!" FontSize="20" TextAlignment="Center" Margin="0,0,0,20"/>
+            <Button Content="Play Quiz" Click="Play_Click" Width="200" Margin="5"/>
+            <Button Content="Edit Quiz" Click ="Edit_Click" Width="200" Margin="5"/>
+            <Button Content="Create Quiz" Click="Create_Click" Width="200" Margin="5"/>
+        </StackPanel>
+        <ContentControl x:Name="MainContentControl"/>
     </Grid>
 </Window>

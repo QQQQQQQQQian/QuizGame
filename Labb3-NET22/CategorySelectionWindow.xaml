@@ -1,0 +1,31 @@
+﻿<Window x:Class="Labb3_NET22.CategorySelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Labb3_NET22"
+        mc:Ignorable="d"
+        Title="Select Categories" Height="400" Width="300" WindowStartupLocation="CenterOwner">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <ListBox x:Name="CategoriesListBox" 
+                 ItemsSource="{Binding Categories}"
+                 SelectionMode="Multiple">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Name}"
+                              IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Ok" Width="75" Margin="5" Click="OkButton_Click"/>
+            <Button Content="Cancel" Width="75" Margin="5" Click="CancelButton_Click"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>
