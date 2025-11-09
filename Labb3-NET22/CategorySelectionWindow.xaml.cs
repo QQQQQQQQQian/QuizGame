@@ -19,21 +19,23 @@ namespace Labb3_NET22
     /// Interaction logic for CategorySelectionWindow.xaml
     /// </summary>
     public partial class CategorySelectionWindow : Window
-    {   public CategorySelectionViewModel ViewModel { get; set; }
+    { 
+        public CategorySelectionViewModel ViewModel { get; set; }
+
         public List<string> SelectedCategories { get; set; } = new List<string>();
         public CategorySelectionWindow(IEnumerable<string>allCategories, IEnumerable<string>preSelected=null)
         {
             InitializeComponent();
-            ViewModel=new CategorySelectionViewModel(allCategories,preSelected);
+            ViewModel= new CategorySelectionViewModel(allCategories, preSelected);
             DataContext = ViewModel;
         }
         public List<string> GetSelectedCategories()
         {
-            return ((CategorySelectionViewModel)DataContext).SelectedCategories;
+            return ViewModel.SelectedCategories;
         }
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            SelectedCategories = GetSelectedCategories();
             this.DialogResult = true;
             this.Close();
 

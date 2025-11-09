@@ -11,10 +11,9 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        
+
         <ListBox x:Name="CategoriesListBox" 
-                 ItemsSource="{Binding Categories}"
-                 SelectionMode="Multiple">
+                 ItemsSource="{Binding Categories}" SelectionMode="Multiple">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <CheckBox Content="{Binding Name}"
@@ -26,6 +25,6 @@
             <Button Content="Ok" Width="75" Margin="5" Click="OkButton_Click"/>
             <Button Content="Cancel" Width="75" Margin="5" Click="CancelButton_Click"/>
         </StackPanel>
-        
+
     </Grid>
 </Window>

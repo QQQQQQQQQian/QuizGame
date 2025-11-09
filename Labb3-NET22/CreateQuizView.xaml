@@ -5,7 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Labb3_NET22"
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="550">
+             d:DesignHeight="800" d:DesignWidth="550">
+    <UserControl.Resources>
+        <local:NullOrEmptyToVisibilityConverter x:Key="NullOrEmptyToVisibilityConverter"/>
+    </UserControl.Resources>
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -23,14 +27,27 @@
         <StackPanel Grid.Row="1" Margin="0,0,0,15">
             <TextBlock Text="Enter quiz title: "  FontSize="15" Margin="0,0,0,5"/>
             <TextBox x:Name="QuizTitleTextBox" Padding="5" Height="30"/>
-            <TextBlock Text="Category" FontSize="15" Height="30" />
-            <TextBox x:Name="CategoryTextBox" Padding="5" Height="30"/> 
+            <!--<TextBlock Text="Category" FontSize="15" Height="30" />
+            <TextBox x:Name="CategoryTextBox" Padding="5" Height="30"/>--> 
         </StackPanel>
         
         <!--Question-->
         <StackPanel Grid.Row="2" Margin="0,0,0,10">
             <TextBlock Text="Enter question:"  FontSize="15" Margin="0,0,0,5"/>
             <TextBox x:Name="QuestionTextBox" Padding="5" Height="40" TextWrapping="Wrap"/>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,5" VerticalAlignment="Center">
+                <Button x:Name="UploadImageButton" Content="Upload Image" Click="UploadImageButton_Click" Width="120" Height="30"/>
+                <TextBlock x:Name="ImagePathTextBlock"
+                           Text="{Binding CurrentImagePath}"
+                           Visibility="{Binding CurrentImagePath, Converter={StaticResource NullOrEmptyToVisibilityConverter}}"
+                           VerticalAlignment="Center" Foreground="Gray"/>
+                <TextBlock Text="Category:" VerticalAlignment="Center" FontSize="15" Margin="20,0,0,0"/>
+                <TextBox x:Name="CategoryTextBox" Width="100" Height="30" Margin="10,0" VerticalAlignment="Center" Padding="5" />
+            </StackPanel>
+            <Image x:Name="QuestionImagePreview" 
+                   Source="{Binding CurrentImagePath}"
+                   Visibility="{Binding CurrentImagePath, Converter={StaticResource NullOrEmptyToVisibilityConverter}}"
+                   Height="100" Stretch="Uniform" Margin="0,5,0,0" />
         </StackPanel>
         <!--Answers-->
         <StackPanel Grid.Row="3" Margin="0,0,0,10">

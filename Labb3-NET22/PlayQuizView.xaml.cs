@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Labb3_NET22.DataModels;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Path = System.IO.Path;
 
 namespace Labb3_NET22
 {
@@ -24,8 +28,34 @@ namespace Labb3_NET22
         public PlayQuizView()
         {
             InitializeComponent();
+            
             ViewModel = new PlayQuizViewModel();
             DataContext = ViewModel;
+            this.Loaded += PlayQuizView_Loaded;
+        }
+        public async void PlayQuizView_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ViewModel.Quiz = await Quiz.LoadFromJsonAsync("Happy Time!");
+                ViewModel.CurrentQuestion = ViewModel.Quiz.myQuestions.FirstOrDefault();
+                ViewModel.SelectedAnswerIndex = -1;
+                ViewModel.TotalAnswered = 0;
+                ViewModel.CorrectAnswers = 0;
+
+                if (ViewModel.SelectedCategories == null || ViewModel.SelectedCategories.Count == 0)
+                    ViewModel.SelectedCategories = ViewModel.Quiz.GetCategories();
+
+                ViewModel.OnPropertyChanged(nameof(ViewModel.CurrentQuestion));
+                ViewModel.OnPropertyChanged(nameof(ViewModel.ScoreText));
+
+               
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading quiz: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
         }
         public void AnswerButton_Click(object sender, RoutedEventArgs e)
         {
@@ -33,26 +63,65 @@ namespace Labb3_NET22
             int selectedIndex = int.Parse(button.Tag.ToString());
             ViewModel.NextQuestion(selectedIndex);
         }
-        public void BuildQuiz_Click(object sender, RoutedEventArgs e)
+        private async void BuildQuiz_Click(object sender, RoutedEventArgs e)
         {
-
-            var categoryWindow = new CategorySelectionWindow(ViewModel.Quiz.GetCategories(), ViewModel.SelectedCategories);
-            if (categoryWindow.ShowDialog() == true)
+            try
             {
-                ViewModel.SelectedCategories = categoryWindow.SelectedCategories;
-                try
+                // Load all questions first
+                var quizFolder = Quiz.GetQuizFolderPath();
+                var allQuestions = new List<Question>();
+                var files = Directory.GetFiles(quizFolder, "*.json");
+                foreach (var file in files)
                 {
-                    ViewModel.LoadQuestionsByCategory();
-                    ViewModel.TotalAnswered = 0;
-                    ViewModel.CorrectAnswers = 0;
-                    ViewModel.NextQuestion(-1);
+                    try
+                    {
+                        string json = await File.ReadAllTextAsync(file);
+                        var quiz = JsonSerializer.Deserialize<Quiz>(json);
+                        if (quiz?.myQuestions != null)
+                            allQuestions.AddRange(quiz.myQuestions);
+                    }
+                    catch { }
                 }
-                catch (InvalidOperationException ex)
+                ViewModel.AllQuestions = allQuestions;
+
+                if (ViewModel.AllQuestions == null || !ViewModel.AllQuestions.Any())
                 {
-                    MessageBox.Show(ex.Message, "NO questions available", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("No questions available in memory.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
+
+                // Show category selection dialog
+                var allCategories = ViewModel.AllQuestions.Select(q => q.Category).Distinct().ToList();
+                var categoryWindow = new CategorySelectionWindow(allCategories, ViewModel.SelectedCategories);
+
+                if (categoryWindow.ShowDialog() == true)
+                {
+                    ViewModel.SelectedCategories = categoryWindow.SelectedCategories;
+                    try
+                    {
+                        ViewModel.BuildQuizByCategory();
+                        ViewModel.TotalAnswered = 0;
+                        ViewModel.CorrectAnswers = 0;
+                        
+
+                        MessageBox.Show("Quiz built successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (InvalidOperationException ex)
+                    {
+                        MessageBox.Show(ex.Message, "No questions available", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error building quiz: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        
+
+
 
         //public void BackToMenu_Click(object sender, RoutedEventArgs e)
         //{

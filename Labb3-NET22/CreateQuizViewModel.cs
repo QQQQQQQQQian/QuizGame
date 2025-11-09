@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -14,6 +15,7 @@ namespace Labb3_NET22
 {
     public class CreateQuizViewModel : INotifyPropertyChanged
     {
+        public string  CurrentImagePath {get; set;}
         public string Title { get; set; }
 
         public string QuestionStatement { get; set; }
@@ -28,7 +30,7 @@ namespace Labb3_NET22
         {
             Quiz = new Quiz();
         }
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         public void OnPropertyChanged([CallerMemberName]string name="")
         {
             if (PropertyChanged != null)
@@ -36,9 +38,9 @@ namespace Labb3_NET22
                 PropertyChanged(this, new PropertyChangedEventArgs(name));
             }
         }
-        public void AddQuestion(string statement, string[] answers, int correctIndex,string category)
+        public async Task AddQuestionAsync(string statement, int correctIndex, string category, string[] answers, string imagePath=null)
         {
-            if(string.IsNullOrWhiteSpace(statement)
+            if(string.IsNullOrWhiteSpace(statement) || string.IsNullOrWhiteSpace(category)
                 ||answers.Any(a => string.IsNullOrWhiteSpace(a))
                 ||correctIndex < 0 || correctIndex >= answers.Length)
             {
@@ -46,14 +48,52 @@ namespace Labb3_NET22
                 OnPropertyChanged("StatusMessage");
                 return;
             }
+            string savedImagePath = null;
+            if (!string.IsNullOrEmpty(imagePath))
+            {
+                string imagesFolder=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QuizGame", "Images");
+                if (!Directory.Exists(imagesFolder))
+                {
+                    Directory.CreateDirectory(imagesFolder);
+                }
+                string fileName = Path.GetFileName(imagePath);
+                savedImagePath = Path.Combine(imagesFolder, fileName);
+                try
+                {
+                    File.Copy(imagePath, savedImagePath, true);
+                }
+                catch (Exception ex)
+                {
+                    StatusMessage = $"Error copying image: {ex.Message}";
+                    OnPropertyChanged("StatusMessage");
+                    return;
+                }
+            }
             
-            Quiz.AddQuestion(statement,correctIndex, category, answers);
+
+            Quiz.AddQuestion(statement, correctIndex, category, answers, savedImagePath);
+            CurrentImagePath = null;
+            try
+            {
+                await Quiz.SaveToJsonAsync(Quiz.Title);
+                StatusMessage = $"Question added successfully! Total: {Quiz.Questions.Count()}";
+                Debug.WriteLine($"Questions in quiz: {Quiz.Questions.Count()}");
+
+
+            }
+            catch (Exception ex) 
+            { 
+                StatusMessage = ex.Message;
+            }
+
+            
 
             QuestionStatement = string.Empty;
             AnswerOptions = new string[3];
             CorrectAnswerIndex = 0;
+            QuestionCategory = string.Empty;
 
-            StatusMessage = $"Question added successfully! Total: {Quiz.Questions.Count()}";
+            
 
             OnPropertyChanged("QuestionStatement");
             OnPropertyChanged("AnswerOptions");
@@ -61,7 +101,7 @@ namespace Labb3_NET22
             OnPropertyChanged("StatusMessage");
 
         }
-        public void SaveQuiz()
+        public async Task SaveQuizAsync()
         {
             if (string.IsNullOrWhiteSpace(Title))
             {
@@ -80,9 +120,9 @@ namespace Labb3_NET22
                 };
 
                 string jsonString = JsonSerializer.Serialize(Quiz, options);
-                File.WriteAllText(FilePath, jsonString);
+                await File.WriteAllTextAsync(FilePath, jsonString);
                 
-                StatusMessage = $"Quiz saved successfully! to {FilePath}";
+                StatusMessage = $"Quiz saved successfully! Path: {FilePath}";
                 OnPropertyChanged("StatusMessage");
 
 

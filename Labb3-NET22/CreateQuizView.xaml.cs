@@ -29,21 +29,37 @@ namespace Labb3_NET22
             ViewModel = new CreateQuizViewModel();
             DataContext = ViewModel;
         }
-        public void AddButton_Click(Object sender, RoutedEventArgs e)
+        public async void AddButton_Click(Object sender, RoutedEventArgs e)
         {
             
-            ViewModel.AddQuestion(QuestionTextBox.Text, new string[] {Answer1TextBox.Text,Answer2TextBox.Text,Answer3TextBox.Text},
-                                  CorrectAnswerCombo.SelectedIndex, CategoryTextBox.Text);
+           await ViewModel.AddQuestionAsync(QuestionTextBox.Text,CorrectAnswerCombo.SelectedIndex, CategoryTextBox.Text,
+                                            new string[] {Answer1TextBox.Text,Answer2TextBox.Text,Answer3TextBox.Text},
+                                  ImagePathTextBlock.Text);
+
             QuestionOutPutTextBox.Text = string.Join(Environment.NewLine, ViewModel.Quiz.Questions.Select((q, index) =>
                 $"{index + 1}. {q.Statement} (Correct Answer: {q.Answers[q.CorrectAnswer]} )"));
+
             StatusTextBlock.Text = ViewModel.StatusMessage;
         }
-        public void SaveButton_Click(Object sender, RoutedEventArgs e)
+        public async void SaveButton_Click(Object sender, RoutedEventArgs e)
         {
             ViewModel.Title = QuizTitleTextBox.Text;
-            ViewModel.SaveQuiz();
+            await ViewModel.SaveQuizAsync();
             StatusTextBlock.Text = ViewModel.StatusMessage;
 
+        }
+        private void UploadImageButton_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog.Filter = "Image files (*.png;*.jpg;*.jpeg)|*.png;*.jpg;*.jpeg|All files (*.*)|*.*";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string selectedFile = openFileDialog.FileName;
+                ImagePathTextBlock.Text = openFileDialog.FileName;
+                QuestionImagePreview.Source = new BitmapImage(new Uri(openFileDialog.FileName));
+                QuestionImagePreview.Visibility = Visibility.Visible;
+            }
+            ViewModel.CurrentImagePath = ImagePathTextBlock.Text;
         }
         public void ClearButton_Click(Object sender, RoutedEventArgs e)
         {
@@ -51,7 +67,6 @@ namespace Labb3_NET22
             Answer1TextBox.Clear();
             Answer2TextBox.Clear();
             Answer3TextBox.Clear();
-            QuestionOutPutTextBox.Clear();
             CorrectAnswerCombo.SelectedIndex=-1;
             StatusTextBlock.Text = "Cleared!";
         }
@@ -64,5 +79,6 @@ namespace Labb3_NET22
                 window.MainMenuPanel.Visibility = Visibility.Visible;
             }
         }
+       
     }
 }

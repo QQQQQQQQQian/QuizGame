@@ -5,8 +5,73 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Labb3_NET22"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
+             d:DesignHeight="500" d:DesignWidth="600">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+        <!-- left -->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Button Content="Open Quiz" Click="OpenQuiz_Click" Width="100" Height="30" Margin="0,0,0,10"/>
+
+            <ListView Grid.Row="1"
+                      ItemsSource="{Binding Quiz.myQuestions}"
+                      SelectedItem="{Binding SelectedQuestion, Mode=TwoWay}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="0,0,0,1" BorderBrush="Gray" Padding="5">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Statement}" FontWeight="Bold" TextWrapping="Wrap"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                    <TextBlock Text="Category: " FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Category}"/>
+                                    <TextBlock Text="  Answers: " FontWeight="SemiBold" Margin="10,0,0,0"/>
+                                    <TextBlock Text="{Binding Answers.Count}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+
+        <!-- right -->
+        <StackPanel Grid.Column="1" Margin="10" VerticalAlignment="Top">
+            <TextBlock Text="Question:" FontWeight="Bold"/>
+            <TextBox Text="{Binding SelectedQuestion.Statement, Mode=TwoWay}" Margin="0,5,0,10"/>
+
+            <TextBlock Text="Answers:" FontWeight="Bold"/>
+            <TextBox Text="{Binding SelectedQuestion.Answer1, Mode=TwoWay}" Margin="0,2"/>
+            <TextBox Text="{Binding SelectedQuestion.Answer2, Mode=TwoWay}" Margin="0,2"/>
+            <TextBox Text="{Binding SelectedQuestion.Answer3, Mode=TwoWay}" Margin="0,2"/>
+
+            <TextBlock Text="Correct Answer Index:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBox Text="{Binding SelectedQuestion.CorrectAnswerIndex, Mode=TwoWay}" Margin="0,2"/>
+
+            <TextBlock Text="Category:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBox Text="{Binding SelectedQuestion.Category, Mode=TwoWay}" Margin="0,2"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="Image Path:" FontWeight="Bold" Height="20" VerticalAlignment="Center"/>
+                <TextBox Text="{Binding SelectedQuestion.ImagePath, Mode=TwoWay}" Width="160"/>
+                <Button Content="Upload" Click="UploadImage_Click" Margin="5,0,5,0"/>
+                <Image Source="{Binding SelectedQuestion.ImagePath}" Height="25" Width="40" Stretch="Uniform"/>
+            </StackPanel>
+
+            <!--<TextBlock Text="Image Path:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBox Text="{Binding SelectedQuestion.ImagePath, Mode=TwoWay}" Margin="0,2"/>-->
+
+            <StackPanel Orientation="Horizontal" Margin="0,20,0,0" HorizontalAlignment="Left">
+                <Button Content="Save Question" Click="SaveQuestion_Click" Width="100" Margin="0,0,10,0"/>
+                <Button Content="Save Quiz" Click="SaveQuiz_Click" Width="100"/>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </UserControl>
