@@ -1,63 +1,55 @@
-# Lab3 – Quiz game!
+# 🧠 Quiz Master (WPF Application)
 
-Du har fått i uppgift att skapa ett grafiskt quiz-spel.</br>
-Man ska kunna spela, editera befintligt eller skapa nytt quiz.</br>
-Att editera, spela och skapa skall vara separata vyer (UserControls).</br>
-Ett quiz skall innehålla flera flervalsfrågor med 3 svarsalternativ till varje fråga. Och sparas som XML, JSON eller CSV. Quiz-filerna skall sparas i appdata/local/"appens namn" 
+![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white)
+![WPF](https://img.shields.io/badge/WPF-MVVM-blue?style=for-the-badge)
+![XAML](https://img.shields.io/badge/XAML-UI-orange?style=for-the-badge)
 
-I templaterepot finnes två klasser fördefinierade, Quiz och Question. Dessa får utökas men det som finns där i får inte ändras.
+**Quiz Master** is a feature-rich desktop assessment tool built with **WPF** and the **MVVM pattern**. It allows users to create, edit, and play custom quizzes with dynamic category selection.
 
-När man spelar spelet skall frågorna slumpas fram och man ska kunna se totala andelen och antalet korrekta svar efter varje fråga.
+## 🏗 Architecture & Design Patterns
 
-När man skapar en ny quiz ska man kunna ange titel och skapa frågor tills man är nöjd. När man skapar en fråga ska man kunna lägga till minst 3 svarsalternativ och markera vilket av dessa som är korrekt. Sedan kunna spara till csv/json eller xml.
+The project structure strictly follows the **Model-View-ViewModel (MVVM)** pattern to ensure testability and separation of concerns.
 
-När man editerar ett quiz så skall man få en överblick av samtliga frågor och välja en av dessa för att kunna ändra dess statement och/eller svarsalternativ.
+### 1. 📂 DataModels (The "M" in MVVM)
+located in `/DataModels`
+- **Question.cs & Quiz.cs:** POCO classes representing the core domain entities.
+- **Separation:** Keeping models separate ensures the data layer is decoupled from the UI.
 
-## Redovisning
-Uppgiften ska lösas individuellt. 
+### 2. 🎮 ViewModels (The "VM" in MVVM)
+Handles the business logic and state, communicating with the UI via Data Binding and Commands.
+- **PlayQuizViewModel:** Manages the game loop, score tracking, and question navigation.
+- **Create/EditQuizViewModel:** Handles the CRUD logic for managing the question bank.
+- **CategorySelectionViewModel:** Logic for filtering and selecting quiz topics.
 
-## Betygskriterier 
-### För godkänt:
-* Man skall lämna in en planering med tillhörande klassdiagram för arbetet.
-* Koden ska fungera enligt ovan beskrivning.
-* Programmet skall fungera utan krasch.
-* Både att spara och läsa fil skall ske asynkront.
-* Både Quiz och Question skall ha lämpliga konstruktorer.
-### För väl godkänt krävs även:
-* Koden ska vara väl strukturerad och lätt att förstå
-* Lösningen ska inte innehålla massa onödig kod.
-* Det ska vara skalbart och enkelt att utöka.
-* Man ska även implementera extrauppgiften enligt nedan. 
+### 3. 🖥️ Views (The "V" in MVVM)
+Pure XAML files responsible for the layout.
+- **CreateQuizView / EditQuizView:** Forms for data entry.
+- **PlayQuizView:** The interactive game interface.
+- **Value Converters:** Uses `NullOrEmptyToVisibilityConverter` to dynamically control UI element visibility based on data state.
 
-## OBS! Extra uppgift som krävs för VG! 
+## ✨ Key Features
 
-Som extra uppgift vill kunden gärna ha följande extra funktionalitet:
+- **Full CRUD System:**
+  - **Create:** Add new questions and quizzes.
+  - **Read:** Load existing quizzes from storage.
+  - **Update:** Edit typos or options in existing questions (`EditQuizView`).
+  - **Delete:** Remove outdated content.
+- **Dynamic UI:**
+  - Real-time feedback during gameplay.
+  - Smart visibility toggling using custom **IValueConverter**.
 
-* Frågor ska kunna ha bilder kopplade till sig.
-* Quiz skall sparas i JSON-format.
-* Frågorna skall vara ordnade efter ämne så att man kan välja att visa slumpade frågor från antingen ett eller flera ämnen.
+## 🚀 How to Run
 
-# Inlämning sker före deadline.
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/QQQQQQQQQian/QuizGame.git
+    ```
+2.  **Build Solution**
+    - Open `Labb3-NET22.sln` in Visual Studio.
+    - Build the solution to restore dependencies.
+3.  **Run**
+    - Press `F5`.
+    - Select a category to start playing, or enter "Edit Mode" to manage questions.
 
-## Tips och Hjälp
-
-Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-returnerar sökvägen till användarens ‘/appdata/local’ mapp
-För hantering av filer och mappar, kolla upp följande klasser:<br>
-**Path, Directory, StreamWriter, StreamReader**<br>
-Tänk på att göra både user input och lagrad data till lower case innan du jämför
-dem om du vill att ditt program ska vara case insensitive.
-
-**ListView** kan användas för att visa ordlistorna och **Open-/Save-Dialog** kan användas för att öppna/spara filer. 
-
-Kolla upp Asynkron programmering [här](https://docs.microsoft.com/en-us/dotnet/api/system.action-1?view=net-5.0) för mer info kring hur du skapar ett asynkront anrop.
-
-Färdiga frågor: [35 Quiz questions](https://www.welovequizzes.com/multiple-choice-quiz-questions-and-answers/)
-
-JSON: [MS Docs Json](https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-how-to?pivots=dotnet-5-0)
-
-XML: [MS Docs XML in .net](https://docs.microsoft.com/en-us/dotnet/api/system.xml.xmldocument?view=net-5.0)
-
-[draw.io](https://app.diagrams.net/)
-
-Använd valfritt grafiskt ramverk, det måste inte vara WPF (Om man väljer annat ramverk så synka med Niklas hur inlämning sker.)
+---
+*Developed as a demonstration of advanced WPF Data Binding and MVVM structure.*
