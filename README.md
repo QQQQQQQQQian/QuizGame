@@ -42,7 +42,7 @@ Pure XAML files responsible for the layout.
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/QQQQQQQQQian/QuizGame.git
+    git clone https://github.com/Qian1507/QuizGame.git
     ```
 2.  **Build Solution**
     - Open `Labb3-NET22.sln` in Visual Studio.
